@@ -1,0 +1,79 @@
+{
+  "name": "pdftool",
+  "version": "1.0.1",
+  "description": "Professional PDF tool built with Electron + Python",
+  "main": "electron/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "pack:py": "npm run pack:py:full",
+    "pack:py:full": ".\\venv_pack\\Scripts\\python.exe python\\tools\\prepare_pack_env.py && .\\venv_pack\\Scripts\\python.exe -m PyInstaller --noconfirm --clean pdf_backend.spec",
+    "pack:py:slim": ".\\venv_pack\\Scripts\\python.exe -m PyInstaller --noconfirm --clean pdf_backend_slim.spec",
+    "stage:backend:full": ".\\venv_pack\\Scripts\\python.exe python\\tools\\stage_backend.py dist\\pdf_backend",
+    "stage:backend:slim": ".\\venv_pack\\Scripts\\python.exe python\\tools\\stage_backend.py dist\\pdf_backend_slim",
+    "pack:py:mac": "./venv_pack/bin/python -m PyInstaller --noconfirm --clean pdf_backend.spec",
+    "pack:win": "npm run build:win:full",
+    "build:win:full": "npm run pack:py:full && npm run stage:backend:full && .\\node_modules\\.bin\\electron-builder.cmd --win nsis",
+    "build:win:slim": "npm run pack:py:slim && npm run stage:backend:slim && .\\node_modules\\.bin\\electron-builder.cmd --win nsis && .\\venv_pack\\Scripts\\python.exe python\\tools\\mark_slim_artifact.py",
+    "pack:mac:arm": "npm run pack:py:mac && electron-builder --mac --arm64"
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "pdfjs-dist": "^5.5.207"
+  },
+  "devDependencies": {
+    "electron": "^41.0.3",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.yourname.pdftool",
+    "productName": "pdf工具箱",
+    "icon": "logo/logo.png",
+    "npmRebuild": false,
+    "files": [
+      "electron/**/*",
+      "renderer/**/*",
+      "logo/**/*",
+      "package.json",
+      "!dist/**",
+      "!build/**",
+      "!venv_build/**",
+      "!python/**",
+      "!node_modules/.cache/**",
+      "!*.zip",
+      "!.idea/**",
+      "!*.spec",
+      "!README.md",
+      "!AGENTS.md"
+    ],
+    "extraResources": [
+      {
+        "from": "dist/pdf_backend",
+        "to": "python",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "mac": {
+      "target": "dmg",
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "logo/logo.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "include": "build/installer.nsh",
+      "installerIcon": "logo/logo.ico",
+      "uninstallerIcon": "logo/logo.ico",
+      "installerHeaderIcon": "logo/logo.ico"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
+}

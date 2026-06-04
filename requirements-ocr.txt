@@ -1,0 +1,15 @@
+# Optional OCR runtime dependencies (minimal inference only)
+# Usage:
+#   pip install -r requirements-ocr.txt
+#
+# NOTE:
+# - Keep this list minimal for OCR inference only.
+# - Do NOT use paddleocr[all].
+# - Do NOT install opencv-contrib-python unless absolutely needed.
+# - Models are downloaded on-demand inside the app.
+
+paddlepaddle>=2.6.0
+paddleocr>=2.8.1
+opencv-python-headless>=4.8.0
+safetensors>=0.4.0
+tokenizers>=0.15.0
